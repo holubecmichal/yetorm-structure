@@ -8,6 +8,9 @@
  * @contributor Michal Holubec
  * @version		1.0.1
  */
+
+require_once("inflector.php");
+
 /** Databázový ovladač */
 define('DB_DRIVER', 'mysql');
 
@@ -75,7 +78,8 @@ foreach ($tables as $className => $table) {
 	foreach ($table as $name => $cols) {
 
 		if(!file_exists(REPOSITORY_PATH . $className . '.php')) {
-			$entity_name = readline($className . ": ");
+			//$entity_name = readline($className . ": ");
+			$entity_name = readline_predefined($className . ": ", Inflector::singularize($className));
 			newEntity($cols, $entity_name);
 		} else {
 			$repository = file_get_contents(REPOSITORY_PATH . $className . '.php');
@@ -197,3 +201,32 @@ function checkBases() {
 		file_put_contents(REPOSITORY_PATH . 'Base.php', $prototype);
 	}
 }
+
+// ------------- READLINE S PREDEFINED HODNOTOU
+$readline = FALSE;
+$prompt_finished = FALSE; 
+
+function readline_callback($ret) { 
+	global $readline, $prompt_finished; 
+	$readline = $ret; 
+	$prompt_finished = TRUE; 
+	readline_callback_handler_remove(); 
+} 
+
+function readline_predefined($prompt, $predefined_text = "") {
+	global $readline, $prompt_finished; 
+
+	readline_callback_handler_install($prompt, 'readline_callback'); 
+	for ($i = 0; $i < strlen($predefined_text); $i++) { 
+		readline_info('pending_input', substr($predefined_text, $i, 1)); 
+		readline_callback_read_char(); 
+	} 
+	$readline = FALSE; 
+	$prompt_finished = FALSE; 
+	while (!$prompt_finished) {
+		readline_callback_read_char(); 
+	}
+
+	return $readline;
+}
+// ------------- READLINE S PREDEFINED HODNOTOU
