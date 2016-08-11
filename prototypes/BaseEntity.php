@@ -8,10 +8,10 @@ use YetORM\Reflection\MethodProperty;
 /**
  * Základní třída entity.
  *
- * @filesource	BaseEntity.php
- * @author		© Web Data Studio, www.web-data.cz
- * @contributor Michal Holubec
- * @version		1.0.1
+ * @filesource	 BaseEntity.php
+ * @author 		 Michal Holubec, Martin Pecha
+ * @contributor	 © Web Data Studio, www.web-data.cz
+ * @version		 2.0.0
  */
 abstract class BaseEntity extends Entity
 {
