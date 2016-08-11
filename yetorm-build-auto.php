@@ -3,22 +3,23 @@
 /**
  * Vytvoření repozitářů a entit z tabulek databáze.
  *
- * @filesource	yetorm-build.php
+ * @filesource	yetorm-build-auto.php
  * @author		© Web Data Studio, www.web-data.cz
  * @contributor Michal Holubec
  * @version		1.0.1
  */
 
 require_once("inflector.php");
+echo "\r\n";
 
 /** Databázový ovladač */
 define('DB_DRIVER', 'mysql');
 
 /** Adresa SQL serveru */
-define('DB_HOST', '127.0.0.1');
+define('DB_HOST', 'localhost');
 
 /** Název databáze */
-define('DB_NAME', 'k3');
+define('DB_NAME', 'smartersurfaces_dev');
 
 /** Přihlašovací jméno */
 define('DB_USER', 'root');
@@ -30,7 +31,7 @@ define('DB_PASSWORD', 'root');
 define('NS', 'App\\');
 
 /** Cesta k app */
-define('APP_PATH', __DIR__ . '/../../../app');
+define('APP_PATH', __DIR__ . '/app');
 
 /** Cesta k model */
 define('MODEL_PATH', APP_PATH . '/model');
@@ -39,10 +40,19 @@ define('REPOSITORY_PATH', MODEL_PATH . '/repository/');
 define('PROTOTYPE_PATH', __DIR__ . '/prototypes');
 
 // Přípojení do databáze,
-$db = new PDO(DB_DRIVER . ':host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8'));
+try {
+	$db = new PDO(DB_DRIVER . ':host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8'));
+} catch (PDOException $e) {
+	echo $e->getMessage();
+	echo "\r\n";
+	echo "\r\n";
+	die;
+}
 
 if(!file_exists(APP_PATH)) {
 	echo "Nebyla nalezena slozka app";
+	echo "\r\n";
+	echo "\r\n";
 	die;
 }
 
@@ -107,6 +117,8 @@ foreach ($tables as $className => $table) {
 		file_put_contents(REPOSITORY_PATH . $className . '.php', "<?php\n\n$buffer\n");
 	}
 }
+echo "\r\n";
+echo "\r\n";
 
 /**
  * Vytvori novou entitu
@@ -153,10 +165,10 @@ function getColType($type, $outputArray = NULL)
 {
 	preg_match("/\w+/", $type, $outputArray);
 
-	$types = array(
-		'string' => array('varchar', 'text'),
-		'\Nette\Utils\DateTime' => array('datetime'),
-	);
+	$types = [
+		'string' => ['varchar', 'text'],
+		'\Nette\Utils\DateTime' => ['datetime'],
+	];
 
 	foreach ($types as $_type => $array) {
 
@@ -203,6 +215,7 @@ function checkBases() {
 }
 
 // ------------- READLINE S PREDEFINED HODNOTOU
+
 $readline = FALSE;
 $prompt_finished = FALSE; 
 
